@@ -1,0 +1,42 @@
+---
+- name: Zabbix Deploy - Step | Repository
+  yum:
+    name: https://repo.zabbix.com/zabbix/5.0/rhel/8/x86_64/zabbix-release-5.0-1.el8.noarch.rpm
+    state: present 
+
+- name: Zabbix Deploy - Step | Install zabbix packages
+  yum : name={{ zabbix_packages }} state=latest
+
+- name: Zabbix Deploy - Step | Import initial schema zabbix database
+  shell: "zcat /usr/share/doc/zabbix-server-{{ zabbix_server_database }}*/create.sql.gz | mysql -h {{ zabbix_database_address }} -u{{ zabbix_database_user }} -p{{ zabbix_database_password }} zabbix"
+  register: result_schema
+
+- name: Zabbix Deploy - Step | Firewall rule apply
+  firewalld:
+    port: 10050-10051/tcp
+    permanent: true
+    state: enabled
+
+- name: Zabbix Deploy - Step | SELinux apply policy
+  seboolean:
+    name: zabbix_can_network
+    state: yes
+    persistent: yes
+
+- selinux_permissive:
+    name: zabbix_t
+    permissive: true
+
+- name: Zabbix Deploy - Step | Copy zabbix_server.conf template 
+  template:
+    src: zabbix_server.conf.5.j2
+    dest: /etc/zabbix/zabbix_server.conf
+  notify: Start Zabbix Server
+
+- name: Start Zabbix Agent
+  systemd:
+       name=zabbix-agent
+       enabled=yes
+       state=started
+       daemon_reload=yes
+...

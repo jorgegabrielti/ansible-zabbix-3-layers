@@ -1,0 +1,21 @@
+---
+- name : 1º | Common Packages
+  hosts: zabbix
+  roles:
+    - principal 
+
+- name : 2º | MySQL Deploy
+  hosts: zabbix_mysql
+  roles: 
+    - zabbix-mysql
+    
+- name : 3º | Zabbix Server
+  hosts: zabbix_server
+  roles:
+    - zabbix-server
+
+- name : 4º - Zabbix Frontend
+  hosts: zabbix_frontend
+  roles:
+    - zabbix-frontend
+...

@@ -1,0 +1,69 @@
+---
+- name: MySQL Deploy - Step | Package installation
+  dnf : 
+     name : ['mysql-server', 'python3-PyMySQL']
+     state: latest
+
+- name: MySQL Deploy - Step | Service started
+  systemd:
+       name=mysqld
+       enabled=yes
+       state=restarted
+       daemon_reload=yes     
+
+       #- name: MySQL Deploy - Step | Firewall rule apply
+
+- firewalld:
+    port: 3306/tcp
+    permanent: true
+    state: enabled
+
+- shell: |
+          firewall-cmd --reload
+
+- name: MySQL Deploy - Step | Password configuration
+  command: openssl rand -base64 6 creates=/root/.my.cnf
+  register: mysql_root_pass
+
+- name: MySQL Deploy - Step | Debug mode
+  debug: 
+    msg: "Root password: {{ mysql_root_pass.stdout }}"
+
+- name: MySQL Deploy - Step | Remove anonymous MySQL user accounts
+  mysql_user:
+    name: ''
+    state: absent 
+
+- name: MySQL Deploy - Step | Remove test database
+  mysql_db: name=test state=absent
+
+- name: MySQL Deploy - Step | Change root pass
+  mysql_user: name=root host={{ item }} password={{ mysql_root_pass.stdout }}
+  with_items:
+    - "{{ansible_fqdn}}"
+    - 127.0.0.1
+    - ::1
+    - localhost
+  when: mysql_root_pass.changed
+
+- name: MySQL Deploy - Step  | Configure [my.cnf] 
+  template:
+    src: my.cnf.yaml
+    dest: /root/.my.cnf
+  when: mysql_root_pass.changed
+
+- name: MySQL Deploy - Step | Create database Zabbix
+  mysql_db:
+    name:
+      - zabbix
+    collation: utf8_bin
+    encoding : utf8 
+    state: present
+
+- name: MySQL Deploy - Step | Create zabbix MySQL user accounts
+  mysql_user: name={{ zabbix_server_user }} password={{ zabbix_server_password }} priv=zabbix.*:ALL host={{ item }} state=present
+  with_items:
+    - "{{ zabbix_server_address }}"
+    - "{{ zabbix_frontend_address }}"
+    - "{{ zabbix_database_address }}"
+... 

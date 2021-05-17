@@ -1,0 +1,15 @@
+### Zabbix
+[zabbix]
+zabbix_server   ansible_host=<IP ADDRESS>
+zabbix_mysql    ansible_host=<IP ADDRESS>
+zabbix_frontend ansible_host=<IP ADDRESS>
+
+[zabbix:vars]
+ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+ansible_ssh_port=22
+ansible_ssh_user=vagrant
+ansible_ssh_pass=vagrant
+ansible_become=yes
+ansible_become_method=sudo
+ansible_become_user=root
+ansible_become_pass=vagrant

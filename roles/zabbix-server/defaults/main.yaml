@@ -1,0 +1,33 @@
+---
+zabbix_version: 5.0
+
+zabbix_start_pollers: 10
+zabbix_start_pollersunreachable: 10
+zabbix_start_trappers: 10
+zabbix_start_pingers: 10
+zabbix_timeout: 30
+zabbix_cache_size: 256M
+zabbix_value_cache_size: 256M
+
+zabbix_server_address: <IP ADDRESS>
+zabbix_frontend_address: <IP ADDRESS>
+zabbix_database_address: <IP ADDRESS>
+zabbix_database_saas: False
+
+#mysql_root_password: Zabbix@Desafio123##
+zabbix_database_user: zabbix_server
+zabbix_database_password: <PASSWORD>
+
+zabbix_server_package_state: present
+zabbix_server_install_recommends: True
+zabbix_server_install_database_cliente: True
+
+# Database
+zabbix_server_database: mysql # mysql or pgsql
+zabbix_server_database_long: mysql # mysql or postgresql
+zabbix_database_creation: True
+zabbix_database_sqlload: True
+
+# MySQL
+mysql_repo: https://dev.mysql.com/get/mysql57-community-release-el7-11.noarch.rpm
+...

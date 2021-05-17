@@ -1,0 +1,15 @@
+---
+common_packages:
+     - vim
+     - net-tools
+     - wget
+     - tcpdump
+     - chrony
+     - epel-release
+     - expect
+     - python3-pexpect
+     - mysql
+     - curl
+     - mtr
+     - tmux
+...

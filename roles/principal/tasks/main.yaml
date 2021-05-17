@@ -1,0 +1,25 @@
+---
+- name: Principal | Install commom packages
+  yum : name={{ common_packages }} state=latest
+
+- name: Principal | Timezone adjust
+  shell: |
+          timedatectl set-timezone America/Sao_Paulo
+          systemctl enable --now chronyd
+          chronyc sources
+
+- name: Principal | NTP service
+  systemd:
+    name=chronyd 
+    state=enabled
+    state=restarted
+    daemon_reload=yes
+
+- firewalld:
+    service: ntp
+    permanent: true
+    state: enabled
+
+- shell: |
+          firewall-cmd --reload
+...

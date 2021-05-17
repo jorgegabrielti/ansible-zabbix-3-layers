@@ -1,0 +1,7 @@
+zabbix_packages:
+     - zabbix-server-mysql
+     - zabbix-agent
+     - zabbix-agent2
+     - zabbix-sender
+     - zabbix-get
+     - policycoreutils-python-utils

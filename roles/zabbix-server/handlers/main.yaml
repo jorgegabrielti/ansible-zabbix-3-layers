@@ -1,0 +1,20 @@
+---
+- name: Start Zabbix Server
+  systemd: 
+       name=zabbix-server
+       enabled=yes
+       state=started
+       daemon_reload=yes
+ 
+- name: Restart zabbix-server
+  systemd:
+       name=zabbix-server
+       state=restarted
+
+- name: Start Zabbix Agent
+  systemd:
+       name=zabbix-agent
+       enabled=yes
+       state=started
+       daemon_reload=yes
+...

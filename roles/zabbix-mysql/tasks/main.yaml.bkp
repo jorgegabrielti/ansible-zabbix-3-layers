@@ -1,0 +1,21 @@
+---
+- name: Instalacao do mysql-server
+     dnf : 
+     name : mysql-server
+     state: latest
+    
+- name: Transfering MySQL install script
+  copy: src=mysql_install.sh dest=/tmp/zabbix_install.sh mode=0777
+  notify: Start MySQL 
+
+- name: MySQL - Configuracao Automatica
+  shell: |
+         "bash /tmp/mysql_secure_installation.sh"
+- name: Criacao do banco zabbix
+  shell: |
+          mysql -u root -p<PASSWORD> -e "CREATE DATABASE zabbix CHARACTER SET utf8 collate utf8_bin;"
+          mysql -u root -p<PASSWORD> -e "CREATE USER 'zabbix'@'{{ zabbix-server }}' IDENTIFIED BY '<PASSWORD>';"
+          mysql -u root -p<PASSWORD> -e "CREATE USER 'zabbix'@'{{ zabbix-frontend }}' IDENTIFIED BY '<PASSWORD>';"
+          mysql -u root -p<PASSWORD> -e "GRANT ALL PRIVILEGES ON zabbix.* to 'zabbix'@'{{ zabbix-server }}';"
+          mysql -u root -p<PASSWORD> -e "GRANT ALL PRIVILEGES ON zabbix.* to 'zabbix'@'{{ zabbix-frontend }}';"
+... 
